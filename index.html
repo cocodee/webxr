@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Android WebXR Demo</title>
+    <title>WebXR Position & Rotation</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background-color: #333;
-            font-family: sans-serif;
+            font-family: 'Courier New', Courier, monospace; /* 使用等宽字体，数字不跳动 */
         }
         #overlay {
             position: absolute;
             top: 20px;
             left: 20px;
-            color: white;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
+            color: #00ff00;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
             border-radius: 8px;
-            pointer-events: none; /* 让点击穿透到底层 */
+            pointer-events: none;
             z-index: 10;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px solid #444;
         }
         #ar-button {
             position: absolute;
@@ -36,144 +39,149 @@
             font-weight: bold;
             cursor: pointer;
             z-index: 10;
-            display: none; /* 默认隐藏，检测到支持后再显示 */
+            display: none;
         }
+        .label { color: #aaa; }
     </style>
 </head>
 <body>
 
     <!-- 数据显示面板 -->
     <div id="overlay">
-        <div>状态: <span id="status">初始化中...</span></div>
-        <div style="margin-top:5px; font-size: 0.9em; color: #00ff00;">
-            X: <span id="posX">0.00</span><br>
-            Y: <span id="posY">0.00</span><br>
-            Z: <span id="posZ">0.00</span>
+        <div style="color: white; margin-bottom: 5px; border-bottom: 1px solid #555; padding-bottom:5px;">
+            WebXR 实时数据
         </div>
+        
+        <!-- 位置数据 -->
+        <div><span class="label">位置 Pos (米):</span></div>
+        X: <span id="posX">0.00</span><br>
+        Y: <span id="posY">0.00</span><br>
+        Z: <span id="posZ">0.00</span>
+        
+        <div style="margin: 5px 0; border-bottom: 1px solid #555;"></div>
+
+        <!-- 旋转数据 -->
+        <div><span class="label">角度 Rot (度):</span></div>
+        Pitch(X): <span id="rotX">0.0</span>° <span class="label">(低头/抬头)</span><br>
+        Yaw  (Y): <span id="rotY">0.0</span>° <span class="label">(左右旋转)</span><br>
+        Roll (Z): <span id="rotZ">0.0</span>° <span class="label">(手机侧倾)</span>
     </div>
 
-    <!-- 进入 AR 的按钮 -->
     <button id="ar-button">进入 AR 模式</button>
 
-    <!-- 引入 Three.js (使用 ES Modules) -->
     <script type="module">
         import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
         let camera, scene, renderer;
         let mesh;
         let arButton = document.getElementById('ar-button');
-        let statusSpan = document.getElementById('status');
         
-        // 坐标显示元素
-        const elX = document.getElementById('posX');
-        const elY = document.getElementById('posY');
-        const elZ = document.getElementById('posZ');
+        // 获取DOM元素引用
+        const ui = {
+            px: document.getElementById('posX'),
+            py: document.getElementById('posY'),
+            pz: document.getElementById('posZ'),
+            rx: document.getElementById('rotX'),
+            ry: document.getElementById('rotY'),
+            rz: document.getElementById('rotZ')
+        };
 
         init();
 
         async function init() {
-            // 1. 检测 WebXR 支持
+            // 1. 检测 WebXR
             if ('xr' in navigator) {
-                try {
-                    const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
-                    if (isSupported) {
-                        arButton.style.display = 'block';
-                        arButton.addEventListener('click', onARButtonClick);
-                        statusSpan.innerText = "准备就绪，点击按钮进入 AR";
-                    } else {
-                        statusSpan.innerText = "WebXR 支持，但不支持 AR 模式";
-                    }
-                } catch (e) {
-                    statusSpan.innerText = "检测失败: " + e.message;
+                const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
+                if (isSupported) {
+                    arButton.style.display = 'block';
+                    arButton.addEventListener('click', onARButtonClick);
+                } else {
+                    alert("WebXR 支持，但不支持 immersive-ar 模式");
                 }
             } else {
-                statusSpan.innerText = "当前浏览器不支持 WebXR";
+                alert("您的浏览器不支持 WebXR");
             }
 
-            // 2. 初始化 Three.js 场景
+            // 2. Three.js 基础设置
             scene = new THREE.Scene();
 
-            // 添加灯光，不然 3D 物体是黑的
             const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
             light.position.set(0.5, 1, 0.25);
             scene.add(light);
 
-            // 3. 创建视觉效果：一个旋转的网格物体
-            // 半径 0.2米 (20厘米)
+            // 3. 创建参考物体 (悬浮球体)
             const geometry = new THREE.IcosahedronGeometry(0.1, 1); 
             const material = new THREE.MeshPhongMaterial({ 
-                color: 0x00ffff, 
+                color: 0xff0055, // 改个颜色区分
                 shininess: 6, 
                 flatShading: true,
                 transparent: true,
-                opacity: 0.9
+                opacity: 0.8 
             });
             
             mesh = new THREE.Mesh(geometry, material);
-            // 将物体放在用户面前 0.5 米处 (Z轴负方向)
             mesh.position.set(0, 0, -0.5); 
             scene.add(mesh);
 
-            // 添加一个线框外壳，看起来更科技感
             const wireframe = new THREE.LineSegments(
                 new THREE.WireframeGeometry(geometry),
                 new THREE.LineBasicMaterial({ color: 0xffffff })
             );
             mesh.add(wireframe);
 
-            // 4. 初始化渲染器
+            // 4. 渲染器设置
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.xr.enabled = true; // 关键：开启 XR 支持
+            renderer.xr.enabled = true; 
             document.body.appendChild(renderer.domElement);
 
-            // 默认相机 (WebXR 会自动接管相机位置，这里只需初始化)
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
         }
 
         async function onARButtonClick() {
-            // 请求 AR 会话
-            // optionalFeatures: 'dom-overlay' 允许我们在 AR 画面上显示 HTML 元素
             const session = await navigator.xr.requestSession('immersive-ar', {
                 optionalFeatures: ['local-floor', 'bounded-floor', 'dom-overlay'],
                 domOverlay: { root: document.body }
             });
 
-            session.addEventListener('end', () => {
-                arButton.style.display = 'block';
-                statusSpan.innerText = "AR 会话结束";
-                renderer.setAnimationLoop(null);
-            });
-
-            // 隐藏按钮
             arButton.style.display = 'none';
-            statusSpan.innerText = "AR 运行中";
 
-            // 通知 Three.js 使用该会话
             renderer.xr.setReferenceSpaceType('local');
             await renderer.xr.setSession(session);
 
-            // 启动渲染循环
             renderer.setAnimationLoop(render);
         }
 
+        // 辅助函数：将弧度转换为角度
+        function toDeg(rad) {
+            return (rad * (180 / Math.PI)).toFixed(1);
+        }
+
         function render() {
-            // 视觉效果：让物体自转
+            // 物体自转特效
             if (mesh) {
                 mesh.rotation.x += 0.01;
                 mesh.rotation.y += 0.02;
             }
 
-            // 获取相机姿态数据并显示
-            // renderer.xr.getCamera() 获取的是 WebXR 当前帧的相机
+            // --- 获取并显示数据的核心逻辑 ---
             const xrCamera = renderer.xr.getCamera();
             if (xrCamera) {
+                // 1. 获取位置
                 const pos = xrCamera.position;
-                // toFixed(2) 保留两位小数
-                elX.innerText = pos.x.toFixed(2);
-                elY.innerText = pos.y.toFixed(2);
-                elZ.innerText = pos.z.toFixed(2);
+                ui.px.innerText = pos.x.toFixed(2);
+                ui.py.innerText = pos.y.toFixed(2);
+                ui.pz.innerText = pos.z.toFixed(2);
+
+                // 2. 获取旋转
+                // Three.js 会自动根据姿态更新 xrCamera 的 rotation 属性
+                const rot = xrCamera.rotation;
+
+                // 将弧度转换为角度显示
+                ui.rx.innerText = toDeg(rot.x); // Pitch: 绕X轴转 (点头)
+                ui.ry.innerText = toDeg(rot.y); // Yaw:   绕Y轴转 (转头)
+                ui.rz.innerText = toDeg(rot.z); // Roll:  绕Z轴转 (歪头)
             }
 
             renderer.render(scene, camera);
