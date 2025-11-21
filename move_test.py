@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 # 1. 这里替换成你的 XML 文件路径
-XML_PATH = "supre_robot/rf2502_new_3_std.urdf"
+XML_PATH = "supre_robot/rf2502_new_3_std.xml"
 
 def main():
     # 2. 加载模型
