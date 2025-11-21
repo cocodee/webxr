@@ -1,5 +1,6 @@
 import numpy as np
 import mujoco
+import mujoco.viewer
 import time
 
 # 定义一个简单的 XML 模型 (一个下落的球)
@@ -23,6 +24,8 @@ def main():
     # 加载模型
     model = mujoco.MjModel.from_xml_string(xml_string)
     data = mujoco.MjData(model)
+
+    mujoco.viewer.launch(model, data)
 
     # 运行简单的仿真循环
     print("Starting simulation loop (headless)...")
