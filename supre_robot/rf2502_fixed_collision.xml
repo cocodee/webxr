@@ -1,5 +1,5 @@
 <mujoco model="rf2502_new_3">
-  <compiler angle="radian" meshdir="meshes/" autolimits="true" convexhull="true"/>
+  <compiler angle="radian" meshdir="meshes/" autolimits="true" />
       <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
       <default>
         <joint damping="2.0" frictionloss="0.2"/>
