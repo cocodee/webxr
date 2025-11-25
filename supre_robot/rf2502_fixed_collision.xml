@@ -1,0 +1,205 @@
+<mujoco model="rf2502_new_3">
+  <compiler angle="radian" meshdir="meshes/"/>
+      <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+      <default>
+        <joint damping="2.0" frictionloss="0.2"/>
+        <!-- kp=20 is the stiffness of the position control -->
+        <position kp="20" dampratio="1.0"/>
+         
+      </default>
+  <asset>
+    <mesh name="base_link" file="base_link.STL"/>
+    <mesh name="body_Link1" file="body_Link1.STL"/>
+    <mesh name="body_Link2" file="body_Link2.STL"/>
+    <mesh name="body_Link3" file="body_Link3.STL"/>
+    <mesh name="body_Link4" file="body_Link4.STL"/>
+    <mesh name="armr_Link" file="armr_Link.STL"/>
+    <mesh name="armr_Link1" file="armr_Link1.STL"/>
+    <mesh name="armr_Link2" file="armr_Link2.STL"/>
+    <mesh name="armr_Link3" file="armr_Link3.STL"/>
+    <mesh name="armr_Link4" file="armr_Link4.STL"/>
+    <mesh name="armr_Link5" file="armr_Link5.STL"/>
+    <mesh name="handr_Link1" file="handr_Link1.STL"/>
+    <mesh name="handr_Link2" file="handr_Link2.STL"/>
+    <mesh name="arml_Link" file="arml_Link.STL"/>
+    <mesh name="arml_Link1" file="arml_Link1.STL"/>
+    <mesh name="arml_Link2" file="arml_Link2.STL"/>
+    <mesh name="arml_Link3" file="arml_Link3.STL"/>
+    <mesh name="arml_Link4" file="arml_Link4.STL"/>
+    <mesh name="arml_Link5" file="arml_Link5.STL"/>
+    <mesh name="handl_Link1" file="handl_Link1.STL"/>
+    <mesh name="handl_Link2" file="handl_Link2.STL"/>
+  </asset>
+
+  <worldbody>
+    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.75294 0.75294 0.75294 1" mesh="base_link"/>
+    <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="base_link"/>
+    <geom pos="0 0.689 0.12151" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link1"/>
+    <geom pos="0 0.689 0.12151" quat="1 0 0 0" type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link1"/>
+    <body name="body_Link2" pos="0.0685 0.8195 0.12151">
+      <inertial pos="-0.073805 -0.00011899 6.8299e-05" quat="0.701671 0.712501 0.000296633 8.15158e-05" mass="0.66114" diaginertia="0.0024429 0.00144552 0.00137658"/>
+      <joint name="body_joint2" pos="0 0 0" axis="1 0 0" range="-0.1745 1.1345"/>
+      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link2"/>
+      <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link2"/>
+      <body name="body_Link3" pos="-0.0685 0 -0.0675">
+        <inertial pos="2.3435e-05 0.079526 0.06751" quat="0.704953 -6.23016e-07 6.19238e-07 0.709254" mass="0.53424" diaginertia="0.000946903 0.000878357 0.00081954"/>
+        <joint name="body_joint3" pos="0 0 0" axis="0 0 -1"/>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link3"/>
+        <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link3"/>
+        <body name="body_Link4" pos="0 0.1935 0.0675">
+          <inertial pos="-2.2988e-05 0.11257 -0.0098981" quat="0.500972 0.495254 -0.499222 0.504509" mass="3.474" diaginertia="0.0167242 0.0155389 0.00740637"/>
+          <joint name="body_joint4" pos="0 0 0" axis="0 -1 0" range="-1.5708 1.5708"/>
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link4"/>
+          <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link4"/>
+          <body name="armr_Link" pos="-0.1085 0.1275 0">
+            <inertial pos="-0.088271 -0.00036216 -0.0029443" quat="5.18242e-05 0.661585 9.35338e-05 0.74987" mass="0.238" diaginertia="0.000868648 0.00070451 0.000417942"/>
+            <joint name="armr_joint" pos="0 0 0" axis="1 0 0" range="-2.9671 2.9671"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link"/>
+            <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link"/>
+            <body name="armr_Link1" pos="-0.10794 0 -0.039999">
+              <inertial pos="-0.002025 -0.057677 0.028331" quat="0.547382 0.454705 -0.399113 0.578209" mass="0.62796" diaginertia="0.00183886 0.00127411 0.00104583"/>
+              <joint name="armr_joint1" pos="0 0 0" axis="0 0 1" range="-3.1416 0.1745"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link1"/>
+              <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link1"/>
+              <body name="armr_Link2" pos="-6.2625e-05 -0.1255 0.0415">
+                <inertial pos="-0.0045947 -0.11257 -2.6233e-05" quat="0.705369 0.707298 -0.029074 -0.0365868" mass="0.82669" diaginertia="0.00152797 0.0014682 0.000822969"/>
+                <joint name="armr_joint2" pos="0 0 0" axis="0 -1 0" range="-1.1345 1.1345"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link2"/>
+                <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link2"/>
+                <body name="armr_Link3" pos="-0.05 -0.1805 0">
+                  <inertial pos="0.030352 -0.026991 -0.0026078" quat="0.696888 0.710831 0.0594707 0.074369" mass="0.59926" diaginertia="0.00129957 0.000941585 0.000646397"/>
+                  <joint name="armr_joint3" pos="0 0 0" axis="-1 0 0" range="-0.1745 1.9199"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link3"/>
+                  <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link3"/>
+                  <body name="armr_Link4" pos="0.050001 -0.092358 0.00049537">
+                    <inertial pos="-0.0018548 -0.087481 6.9297e-05" quat="0.525362 0.472481 -0.525806 0.473587" mass="0.59684" diaginertia="0.00089175 0.000884091 0.000474528"/>
+                    <joint name="armr_joint4" pos="0 0 0" axis="0 -1 0" range="-1.1345 1.1345"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.75294 0.75294 0.75294 1" mesh="armr_Link4"/>
+                    <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="armr_Link4"/>
+                    <body name="armr_Link5" pos="-0.043501 -0.16 0">
+                      <inertial pos="0.042096 -0.086394 -0.0032579" quat="-0.0146869 0.707129 -0.0118299 0.706833" mass="0.44092" diaginertia="0.00029429 0.000251691 0.000217709"/>
+                      <joint name="armr_joint5" pos="0 0 0" axis="-1 0 0" range="-1.5707 1.5707"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link5"/>
+                      <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="armr_Link5"/>
+                      <body name="handr_Link1" pos="0.064 -0.17204 -0.015493" quat="0.999822 0.0188424 0 0">
+                        <inertial pos="-0.0010285 -0.0014487 0.0037309" quat="0.526717 0.4529 -0.458287 0.554457" mass="0.0068162" diaginertia="1.34491e-06 8.63514e-07 6.24543e-07"/>
+                        <joint name="handr_joint1" pos="0 0 0" axis="-1 0 0" type="slide" range="0 0.025"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="handr_Link1"/>
+                        <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="handr_Link1"/>
+                      </body>
+                      <body name="handr_Link2" pos="0.023 -0.17272 0.0024942" quat="0.999822 0.0188424 0 0">
+                        <inertial pos="0.0010285 -0.0014487 -0.0037309" quat="0.4529 0.526717 -0.554457 0.458287" mass="0.0068162" diaginertia="1.34491e-06 8.63514e-07 6.24543e-07"/>
+                        <joint name="handr_joint2" pos="0 0 0" axis="1 0 0" type="slide" range="0 0.025"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="handr_Link2"/>
+                        <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="handr_Link2"/>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="arml_Link" pos="0.1085 0.1275 0">
+            <inertial pos="0.088271 -0.00036216 0.0029443" quat="-5.18242e-05 0.661585 -9.35338e-05 0.74987" mass="0.238" diaginertia="0.000868648 0.00070451 0.000417942"/>
+            <joint name="arml_joint" pos="0 0 0" axis="-1 0 0" range="-2.9671 2.9671"/>
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link"/>
+            <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link"/>
+            <body name="arml_Link1" pos="0.10794 0 0.039999">
+              <inertial pos="0.002025 -0.057677 -0.028331" quat="0.454705 0.547381 -0.578209 0.399113" mass="0.62796" diaginertia="0.00183886 0.00127411 0.00104583"/>
+              <joint name="arml_joint1" pos="0 0 0" axis="0 0 -1" range="-3.1416 0.1745"/>
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link1"/>
+              <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link1"/>
+              <body name="arml_Link2" pos="6.2625e-05 -0.1255 -0.0415">
+                <inertial pos="0.0045947 -0.11257 2.6233e-05" quat="0.707298 0.705369 0.0365868 0.029074" mass="0.82669" diaginertia="0.00152797 0.0014682 0.000822969"/>
+                <joint name="arml_joint2" pos="0 0 0" axis="0 1 0" range="-1.1345 1.1345"/>
+                <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link2"/>
+                <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link2"/>
+                <body name="arml_Link3" pos="0.05 -0.1805 0">
+                  <inertial pos="-0.030352 -0.026991 0.0026078" quat="0.710831 0.696888 -0.074369 -0.0594707" mass="0.59926" diaginertia="0.00129957 0.000941585 0.000646397"/>
+                  <joint name="arml_joint3" pos="0 0 0" axis="-1 0 0" range="-0.1745 1.9198"/>
+                  <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link3"/>
+                  <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link3"/>
+                  <body name="arml_Link4" pos="-0.050001 -0.092358 -0.00049537">
+                    <inertial pos="0.0018548 -0.087481 -6.9297e-05" quat="0.472481 0.525362 -0.473587 0.525806" mass="0.59684" diaginertia="0.00089175 0.000884091 0.000474528"/>
+                    <joint name="arml_joint4" pos="0 0 0" axis="0 1 0" range="-1.1345 1.1345"/>
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.75294 0.75294 0.75294 1" mesh="arml_Link4"/>
+                    <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="arml_Link4"/>
+                    <body name="arml_Link5" pos="0.043501 -0.16 0">
+                      <inertial pos="-0.042096 -0.086394 0.0032579" quat="0.0146869 0.707129 0.0118299 0.706833" mass="0.44092" diaginertia="0.00029429 0.000251691 0.000217709"/>
+                      <joint name="arml_joint5" pos="0 0 0" axis="-1 0 0" range="-1.5708 1.5708"/>
+                      <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link5"/>
+                      <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="arml_Link5"/>
+                      <body name="handl_Link1" pos="-0.064 -0.17204 0.015493" quat="0.999822 -0.0188424 0 0">
+                        <inertial pos="0.0010285 -0.0014487 -0.0037309" quat="0.4529 0.526717 -0.554457 0.458287" mass="0.0068162" diaginertia="1.34491e-06 8.63514e-07 6.24543e-07"/>
+                        <joint name="handl_joint1" pos="0 0 0" axis="1 0 0" type="slide" range="0 0.025"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="handl_Link1"/>
+                        <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="handl_Link1"/>
+                      </body>
+                      <body name="handl_Link2" pos="-0.023 -0.17272 -0.0024942" quat="0.999822 -0.0188424 0 0">
+                        <inertial pos="-0.0010285 -0.0014487 0.0037309" quat="0.526717 0.4529 -0.458287 0.554457" mass="0.0068162" diaginertia="1.34491e-06 8.63514e-07 6.24543e-07"/>
+                        <joint name="handl_joint2" pos="0 0 0" axis="-1 0 0" type="slide" range="0 0.025"/>
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="handl_Link2"/>
+                        <geom type="mesh" rgba="0.79216 0.81961 0.93333 1" mesh="handl_Link2"/>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+<actuator>
+    <!-- 
+    <position name="act_body_joint2" joint="body_joint2"/>
+    <position name="act_body_joint3" joint="body_joint3"/>
+    <position name="act_body_joint4" joint="body_joint4"/>
+    躯干关节 -->
+    <!-- 右臂关节 -->
+    <position name="act_armr_joint" joint="armr_joint"/>
+    <position name="act_armr_joint1" joint="armr_joint1"/>
+    <position name="act_armr_joint2" joint="armr_joint2"/>
+    <position name="act_armr_joint3" joint="armr_joint3"/>
+    <position name="act_armr_joint4" joint="armr_joint4"/>
+    <position name="act_armr_joint5" joint="armr_joint5"/>
+    
+    <!-- 右手夹爪 (滑动关节) -->
+    <position name="act_handr_joint1" joint="handr_joint1"/>
+    <position name="act_handr_joint2" joint="handr_joint2"/>
+
+    <!-- 左臂关节 -->
+    <position name="act_arml_joint" joint="arml_joint"/>
+    <position name="act_arml_joint1" joint="arml_joint1"/>
+    <position name="act_arml_joint2" joint="arml_joint2"/>
+    <position name="act_arml_joint3" joint="arml_joint3"/>
+    <position name="act_arml_joint4" joint="arml_joint4"/>
+    <position name="act_arml_joint5" joint="arml_joint5"/>
+
+    <!-- 左手夹爪 (滑动关节) -->
+    <position name="act_handl_joint1" joint="handl_joint1"/>
+    <position name="act_handl_joint2" joint="handl_joint2"/>
+  </actuator> 
+
+  <contact>
+    <exclude body1="body_Link2" body2="body_Link3"/>
+    <exclude body1="body_Link3" body2="body_Link4"/>
+    <exclude body1="body_Link4" body2="armr_Link"/>
+    <exclude body1="armr_Link" body2="armr_Link1"/>
+    <exclude body1="armr_Link1" body2="armr_Link2"/>
+    <exclude body1="armr_Link2" body2="armr_Link3"/>
+    <exclude body1="armr_Link3" body2="armr_Link4"/>
+    <exclude body1="armr_Link4" body2="armr_Link5"/>
+    <exclude body1="armr_Link5" body2="handr_Link1"/>
+    <exclude body1="armr_Link5" body2="handr_Link2"/>
+    <exclude body1="body_Link4" body2="arml_Link"/>
+    <exclude body1="arml_Link" body2="arml_Link1"/>
+    <exclude body1="arml_Link1" body2="arml_Link2"/>
+    <exclude body1="arml_Link2" body2="arml_Link3"/>
+    <exclude body1="arml_Link3" body2="arml_Link4"/>
+    <exclude body1="arml_Link4" body2="arml_Link5"/>
+    <exclude body1="arml_Link5" body2="handl_Link1"/>
+    <exclude body1="arml_Link5" body2="handl_Link2"/>
+  </contact>
+</mujoco>
