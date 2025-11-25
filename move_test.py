@@ -4,7 +4,8 @@ import numpy as np
 import time
 import os
 # 1. 这里替换成你的 XML 文件路径
-XML_PATH = "supre_robot/rf2502_fixed_collision.xml"
+# XML_PATH = "supre_robot/rf2502_fixed_collision.xml"
+XML_PATH = "supre_robot/rf2502_new_3_std.xml"
 # --- Configuration ---
 URDF_PATH = "supre_robot/rf2502_new_3_std.urdf" # Replace with your file path
 
