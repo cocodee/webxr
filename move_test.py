@@ -32,6 +32,11 @@ def main():
 
     with mujoco.viewer.launch_passive(model, data) as viewer:
         start_time = time.time()
+        
+        mujoco.mj_forward(model, data) 
+        viewer.sync()
+        
+        print("仿真已暂停。请在 Viewer 中按空格键开始，或查看红色的接触点。")
         while viewer.is_running():
             t = time.time() - start_time
 
