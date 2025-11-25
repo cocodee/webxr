@@ -2,66 +2,30 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 import time
-
+import os
 # 1. 这里替换成你的 XML 文件路径
 XML_PATH = "supre_robot/rf2502_new_3_std.xml"
-import mujoco
-import mujoco.viewer
-import numpy as np
-import time
-
 # --- Configuration ---
 URDF_PATH = "supre_robot/rf2502_new_3_std.urdf" # Replace with your file path
 
-# 1. HELPER: Auto-generate an XML wrapper to add actuators
-def create_actuated_model(urdf_path):
-    # Load the raw model first to find joint names
-    temp_model = mujoco.MjModel.from_xml_path(urdf_path)
-    
-    # Start creating the XML string
-    xml_string = f"""
-    <mujoco>
-      <option timestep="0.002" gravity="0 0 -9.81"/>
-      <default>
-        <joint damping="0.5" frictionloss="0.1"/>
-        <!-- kp=20 is the stiffness of the position control -->
-        <position kp="20" dampratio="1.0"/>
-      </default>
-      <worldbody>
-        <light pos="0 0 2"/>
-        <geom type="plane" size="2 2 0.1" rgba=".9 .9 .9 1"/>
-        <body pos="0 0 0">
-            <include file="{urdf_path}"/>
-        </body>
-      </worldbody>
-      
-      <actuator>
-    """
-    
-    # Loop through all joints and add a <position> actuator
-    # We skip joint 0 if it is a free joint (floating base) usually, 
-    # but here we iterate all.
-    for i in range(temp_model.njnt):
-        # Get joint name
-        name = mujoco.mj_id2name(temp_model, mujoco.mjtObj.mjOBJ_JOINT, i)
-        if name:
-            # Add position controller
-            xml_string += f'    <position name="act_{name}" joint="{name}"/>\n'
-            
-    xml_string += """
-      </actuator>
-    </mujoco>
-    """
-    return xml_string
-
 def main():
-    # 2. Create the wrapper model with actuators
-    print(f"Loading {URDF_PATH} and auto-rigging actuators...")
-    xml = create_actuated_model(URDF_PATH)
-    print(f"Created model XML.{xml}")
-    # 3. Load the new model
-    model = mujoco.MjModel.from_xml_string(xml)
-    data = mujoco.MjData(model)
+    # 获取绝对路径 (建议这样做，防止路径错误)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    xml_path = os.path.join(current_dir, xml_file)
+
+    if not os.path.exists(xml_path):
+        print(f"错误: 找不到文件 {xml_path}")
+        return
+
+    print(f"正在加载模型: {xml_path}")
+
+    try:
+        # 2. 直接加载 XML 文件
+        model = mujoco.MjModel.from_xml_path(xml_path)
+        data = mujoco.MjData(model)
+    except ValueError as e:
+        print(f"加载失败: {e}")
+        return
     
     num_actuators = model.nu # Number of controls/actuators
     print(f"Created {num_actuators} actuators.")
