@@ -5,6 +5,7 @@
         <joint damping="2.0" frictionloss="0.2"/>
         <!-- kp=20 is the stiffness of the position control -->
         <position kp="20" dampratio="1.0"/>
+        <geom contype="0" conaffinity="0"/> 
       </default>
   <asset>
     <mesh name="base_link" file="base_link.STL"/>
