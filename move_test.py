@@ -58,7 +58,7 @@ def main():
     # 2. Create the wrapper model with actuators
     print(f"Loading {URDF_PATH} and auto-rigging actuators...")
     xml = create_actuated_model(URDF_PATH)
-    
+    print(f"Created model XML.{xml}")
     # 3. Load the new model
     model = mujoco.MjModel.from_xml_string(xml)
     data = mujoco.MjData(model)
