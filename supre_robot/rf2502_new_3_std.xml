@@ -1,8 +1,8 @@
 <mujoco model="rf2502_new_3">
   <compiler angle="radian" meshdir="meshes/"/>
-      <option timestep="0.002" gravity="0 0 -9.81"/>
+      <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" collision="predefined"/>
       <default>
-        <joint damping="0.5" frictionloss="0.1"/>
+        <joint damping="2.0" frictionloss="0.2"/>
         <!-- kp=20 is the stiffness of the position control -->
         <position kp="20" dampratio="1.0"/>
       </default>
