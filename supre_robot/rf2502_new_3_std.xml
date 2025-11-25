@@ -151,11 +151,11 @@
     </body>
   </worldbody>
 <actuator>
-    <!-- 躯干关节 -->
+    <!-- 
     <position name="act_body_joint2" joint="body_joint2"/>
     <position name="act_body_joint3" joint="body_joint3"/>
     <position name="act_body_joint4" joint="body_joint4"/>
-
+    躯干关节 -->
     <!-- 右臂关节 -->
     <position name="act_armr_joint" joint="armr_joint"/>
     <position name="act_armr_joint1" joint="armr_joint1"/>
