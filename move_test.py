@@ -11,7 +11,7 @@ URDF_PATH = "supre_robot/rf2502_new_3_std.urdf" # Replace with your file path
 def main():
     # 获取绝对路径 (建议这样做，防止路径错误)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    xml_path = os.path.join(current_dir, xml_file)
+    xml_path = os.path.join(current_dir, XML_PATH)
 
     if not os.path.exists(xml_path):
         print(f"错误: 找不到文件 {xml_path}")
