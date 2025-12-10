@@ -2,7 +2,7 @@ import mujoco
 import os
 
 # 1. 设置路径
-xml_dir = "supre_robot"
+xml_dir = "../supre_robot"
 input_xml = "rf2502_new_3_std.xml"
 output_xml = "rf2502_fixed_collision.xml"
 
