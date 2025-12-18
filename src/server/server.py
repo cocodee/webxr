@@ -44,8 +44,8 @@ async def websocket_endpoint(websocket: WebSocket):
             
             # 2. 直接转发到 Zenoh (透传，速度最快)
             # 或者在这里解析一下做一些验证
-            z_pub.put(data)
-            
+            r = z_pub.put(data)
+            print(f"Received data and send out data:{data},return: {r}")
     except WebSocketDisconnect:
         print("Client disconnected")
     except Exception as e:

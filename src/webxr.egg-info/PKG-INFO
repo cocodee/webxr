@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: webxr
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: mujoco>=3.3.7
+Requires-Dist: numpy>=2.2.6
+Requires-Dist: pybullet>=3.2.5
+
+# webxr
