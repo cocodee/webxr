@@ -1,0 +1,41 @@
+services:
+  zenoh-router:
+    image: eclipse/zenoh:latest
+    container_name: webxr-zenoh-router
+    restart: always
+    # 暴露 7447 端口供 Docker 外部的机器人连接
+    ports:
+      - "7447:7447/tcp"
+      - "7447:7447/udp"
+    # 让 Zenoh 监听所有接口
+    command: ["--listen", "tcp/0.0.0.0:7447"]
+    networks:
+      - webxr-net
+  # 后端服务
+  teleop-server:
+    build: ./server
+    container_name: webxr-teleop-backend
+    restart: always
+    environment:
+      # 如果 Zenoh Router 运行在宿主机上，使用 host.docker.internal (Windows/Mac)
+      # 或者直接使用宿主机局域网 IP (Linux)
+      - ZENOH_CONNECT_KEY=tcp/zenoh-router:7447
+    networks:
+      - webxr-net
+
+  # Nginx 代理服务
+  teleop-proxy:
+    build: ./nginx
+    container_name: webxr-teleop-nginx
+    restart: always
+    ports:
+      - "443:443"  # 映射 HTTPS
+      - "80:80"    # 映射 HTTP (用于重定向)
+    depends_on:
+      - teleop-server
+    networks:
+      - webxr-net
+
+networks:
+  webxr-net:
+    driver: bridge
