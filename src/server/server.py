@@ -53,7 +53,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 # --- 静态文件服务 (提供 HTML) ---
 # 访问 http://ip:8000/ 即可
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+# app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     # 监听 0.0.0.0 允许局域网访问
