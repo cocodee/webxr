@@ -108,16 +108,23 @@
                 const p = xrCamera.position;
                 const q = xrCamera.quaternion;
 
-                // 更新UI
+                // 1. 更新位置显示
                 document.getElementById('info-pos').innerText = `${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}`;
-                // document.getElementById('info-rot').innerText = `${q.x.toFixed(2)}, ${q.y.toFixed(2)}, ${q.z.toFixed(2)}, ${q.w.toFixed(2)}`;
+                
+                // 2. 将四元数转换为欧拉角以便显示 (单位：度)
+                // 创建一个 Euler 对象并从四元数转换
+                const euler = new THREE.Euler().setFromQuaternion(q, 'YXZ');
+                const rx = (euler.x * 180 / Math.PI).toFixed(0); // Pitch
+                const ry = (euler.y * 180 / Math.PI).toFixed(0); // Yaw
+                const rz = (euler.z * 180 / Math.PI).toFixed(0); // Roll
 
-                // 发送数据
+                document.getElementById('info-rot').innerText = `P:${rx}° Y:${ry}° R:${rz}°`;
+
+                // 3. 发送数据 (依然发送四元数以避免死锁)
                 if (isConnected && socket.readyState === WebSocket.OPEN) {
                     const payload = {
                         p: [p.x, p.y, p.z],
                         q: [q.x, q.y, q.z, q.w],
-                        // 可以在这里添加屏幕上的虚拟按钮状态
                         g: 1.0 
                     };
                     socket.send(JSON.stringify(payload));

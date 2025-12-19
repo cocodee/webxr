@@ -14,7 +14,14 @@ def listener(sample):
     """
     try:
         # 1. 解码 payload (bytes -> string)
-        payload_str = sample.payload.decode('utf-8')
+        if hasattr(sample.payload, 'to_bytes'):
+            payload_bytes = sample.payload.to_bytes()
+        else:
+            # 兼容旧版本或直接是 bytes 的情况
+            payload_bytes = sample.payload
+            
+        # 解码 bytes -> string
+        payload_str = payload_bytes.decode('utf-8')
         
         # 2. 解析 JSON
         data = json.loads(payload_str)
