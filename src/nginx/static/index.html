@@ -3,68 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>WebXR Position & Rotation</title>
+    <title>WebXR Teleop</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #333;
-            font-family: 'Courier New', Courier, monospace; /* 使用等宽字体，数字不跳动 */
-        }
+        body { margin: 0; overflow: hidden; background-color: #333; font-family: monospace; }
         #overlay {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #00ff00;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            pointer-events: none;
-            z-index: 10;
-            font-size: 14px;
-            line-height: 1.5;
-            border: 1px solid #444;
+            position: absolute; top: 20px; left: 20px; color: #00ff00;
+            background: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;
+            pointer-events: none; z-index: 10; font-size: 14px; border: 1px solid #444;
         }
         #ar-button {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 24px;
-            background: white;
-            color: black;
-            border: none;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-            display: none;
+            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background: white; color: black; border: none;
+            border-radius: 24px; font-size: 16px; font-weight: bold; cursor: pointer; z-index: 10; display: none;
         }
-        .label { color: #aaa; }
     </style>
 </head>
 <body>
-
-    <!-- 数据显示面板 -->
     <div id="overlay">
-        <div style="color: white; margin-bottom: 5px; border-bottom: 1px solid #555; padding-bottom:5px;">
-            WebXR 实时数据
-        </div>
-        
-        <!-- 位置数据 -->
-        <div><span class="label">位置 Pos (米):</span></div>
-        X: <span id="posX">0.00</span><br>
-        Y: <span id="posY">0.00</span><br>
-        Z: <span id="posZ">0.00</span>
-        
-        <div style="margin: 5px 0; border-bottom: 1px solid #555;"></div>
-
-        <!-- 旋转数据 -->
-        <div><span class="label">角度 Rot (度):</span></div>
-        Pitch(X): <span id="rotX">0.0</span>° <span class="label">(低头/抬头)</span><br>
-        Yaw  (Y): <span id="rotY">0.0</span>° <span class="label">(左右旋转)</span><br>
-        Roll (Z): <span id="rotZ">0.0</span>° <span class="label">(手机侧倾)</span>
+        <div>WebXR 连接状态: <span id="status" style="color:red">断开</span></div>
+        <br>
+        Pos: <span id="info-pos">0, 0, 0</span><br>
+        Rot: <span id="info-rot">0, 0, 0, 1</span>
     </div>
 
     <button id="ar-button">进入 AR 模式</button>
@@ -73,67 +32,60 @@
         import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
         let camera, scene, renderer;
-        let mesh;
-        let arButton = document.getElementById('ar-button');
-        
-        // 获取DOM元素引用
-        const ui = {
-            px: document.getElementById('posX'),
-            py: document.getElementById('posY'),
-            pz: document.getElementById('posZ'),
-            rx: document.getElementById('rotX'),
-            ry: document.getElementById('rotY'),
-            rz: document.getElementById('rotZ')
-        };
+        let socket;
+        let isConnected = false;
+
+        // 初始化 WebSocket 连接
+        function initSocket() {
+            // 自动连接到提供网页服务的同一个 IP 和端口的 /ws 路径
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = () => {
+                console.log("WS Connected");
+                isConnected = true;
+                document.getElementById('status').innerText = "已连接";
+                document.getElementById('status').style.color = "#00ff00";
+            };
+
+            socket.onclose = () => {
+                console.log("WS Disconnected");
+                isConnected = false;
+                document.getElementById('status').innerText = "断开";
+                document.getElementById('status').style.color = "red";
+                setTimeout(initSocket, 2000); // 断线重连
+            };
+        }
 
         init();
+        initSocket();
 
         async function init() {
-            // 1. 检测 WebXR
+            const arButton = document.getElementById('ar-button');
             if ('xr' in navigator) {
                 const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
                 if (isSupported) {
                     arButton.style.display = 'block';
                     arButton.addEventListener('click', onARButtonClick);
                 } else {
-                    alert("WebXR 支持，但不支持 immersive-ar 模式");
+                    document.getElementById('overlay').innerText += "\n不支持 AR 模式";
                 }
-            } else {
-                alert("您的浏览器不支持 WebXR");
             }
 
-            // 2. Three.js 基础设置
             scene = new THREE.Scene();
-
+            // 添加一些光照和参考物体
             const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-            light.position.set(0.5, 1, 0.25);
             scene.add(light);
-
-            // 3. 创建参考物体 (悬浮球体)
-            const geometry = new THREE.IcosahedronGeometry(0.1, 1); 
-            const material = new THREE.MeshPhongMaterial({ 
-                color: 0xff0055, // 改个颜色区分
-                shininess: 6, 
-                flatShading: true,
-                transparent: true,
-                opacity: 0.8 
-            });
-            
-            mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(0, 0, -0.5); 
+            const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 1), new THREE.MeshPhongMaterial({ color: 0xff0055, wireframe: true }));
+            mesh.position.set(0, 0, -0.5);
             scene.add(mesh);
 
-            const wireframe = new THREE.LineSegments(
-                new THREE.WireframeGeometry(geometry),
-                new THREE.LineBasicMaterial({ color: 0xffffff })
-            );
-            mesh.add(wireframe);
-
-            // 4. 渲染器设置
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.xr.enabled = true; 
+            renderer.xr.enabled = true;
             document.body.appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
@@ -144,46 +96,33 @@
                 optionalFeatures: ['local-floor', 'bounded-floor', 'dom-overlay'],
                 domOverlay: { root: document.body }
             });
-
-            arButton.style.display = 'none';
-
+            document.getElementById('ar-button').style.display = 'none';
             renderer.xr.setReferenceSpaceType('local');
             await renderer.xr.setSession(session);
-
             renderer.setAnimationLoop(render);
         }
 
-        // 辅助函数：将弧度转换为角度
-        function toDeg(rad) {
-            return (rad * (180 / Math.PI)).toFixed(1);
-        }
-
         function render() {
-            // 物体自转特效
-            if (mesh) {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.02;
-            }
-
-            // --- 获取并显示数据的核心逻辑 ---
             const xrCamera = renderer.xr.getCamera();
             if (xrCamera) {
-                // 1. 获取位置
-                const pos = xrCamera.position;
-                ui.px.innerText = pos.x.toFixed(2);
-                ui.py.innerText = pos.y.toFixed(2);
-                ui.pz.innerText = pos.z.toFixed(2);
+                const p = xrCamera.position;
+                const q = xrCamera.quaternion;
 
-                // 2. 获取旋转
-                // Three.js 会自动根据姿态更新 xrCamera 的 rotation 属性
-                const rot = xrCamera.rotation;
+                // 更新UI
+                document.getElementById('info-pos').innerText = `${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}`;
+                // document.getElementById('info-rot').innerText = `${q.x.toFixed(2)}, ${q.y.toFixed(2)}, ${q.z.toFixed(2)}, ${q.w.toFixed(2)}`;
 
-                // 将弧度转换为角度显示
-                ui.rx.innerText = toDeg(rot.x); // Pitch: 绕X轴转 (点头)
-                ui.ry.innerText = toDeg(rot.y); // Yaw:   绕Y轴转 (转头)
-                ui.rz.innerText = toDeg(rot.z); // Roll:  绕Z轴转 (歪头)
+                // 发送数据
+                if (isConnected && socket.readyState === WebSocket.OPEN) {
+                    const payload = {
+                        p: [p.x, p.y, p.z],
+                        q: [q.x, q.y, q.z, q.w],
+                        // 可以在这里添加屏幕上的虚拟按钮状态
+                        g: 1.0 
+                    };
+                    socket.send(JSON.stringify(payload));
+                }
             }
-
             renderer.render(scene, camera);
         }
     </script>
