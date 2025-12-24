@@ -6,7 +6,7 @@ import sys
 # 配置
 TOPIC = "lerobot/webxr/teleop"
 # 连接到 Docker 暴露出来的端口
-CONNECT_KEY = "tcp/107.175.133.248:7447" 
+CONNECT_KEY = "tcp/74.48.61.171:7447" 
 
 def listener(sample):
     """
