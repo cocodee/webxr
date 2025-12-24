@@ -7,8 +7,8 @@ import time
 # 如果找不到文件，脚本会使用 PyBullet 自带的 r2d2 机器人作为演示
 # 例如: urdf_path = "./lerobot/robots/my_robot.urdf"
 #urdf_path = "r2d2.urdf" 
-urdf_path = "../urdf/RJ2506-20251125-all-13-std.urdf"
-urdf_path = "../supre_robot/rf2502_new_3_std.urdf"
+urdf_path = "../../urdf/RJ2506-20251125-all-13-std.urdf"
+urdf_path = "../../supre_robot/rf2502_new_3_std.urdf"
 # ===========================================
 
 def main():
