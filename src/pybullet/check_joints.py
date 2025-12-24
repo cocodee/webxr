@@ -9,7 +9,7 @@ import time
 #urdf_path = "r2d2.urdf" 
 #urdf_path = "../../urdf/RJ2506-20251125-all-13-std.urdf"
 urdf_path = "../../supre_robot/rf2502_new_3_std.urdf"
-urdf_path = "home/smai/workspace/dc_dir/sim_lerobot/rf2502_new_3/urdf/rf2502_new_3.urdf"
+urdf_path = "/home/smai/workspace/dc_dir/sim_lerobot/rf2502_new_3/urdf/rf2502_new_3.urdf"
 # ===========================================
 
 def main():
