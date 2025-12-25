@@ -30,8 +30,8 @@
     <mesh name="handl_Link1" file="handl_Link1.STL"/>
     <mesh name="handl_Link2" file="handl_Link2.STL"/>
   </asset>
-
   <worldbody>
+  <site name="base_frame_marker" pos="0 0 0" size="0.01" type="sphere" rgba="1 0 0 1"/>
     <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.75294 0.75294 0.75294 1" mesh="base_link"/>
     <geom type="mesh" rgba="0.75294 0.75294 0.75294 1" mesh="base_link"/>
     <geom pos="0 0.689 0.12151" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.79216 0.81961 0.93333 1" mesh="body_Link1"/>

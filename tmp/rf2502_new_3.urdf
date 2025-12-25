@@ -4,14 +4,11 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="rf2502_new_3">
-  <mujoco>
-    <compiler meshdir="meshes/" discardvisual="false"/>
-  </mujoco>
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="0 0 0"
+        xyz="-9.7992E-05 0.22969 0.069502"
         rpy="0 0 0" />
       <mass
         value="11.866" />
@@ -26,10 +23,10 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="1.5708 0 0" />
       <geometry>
         <mesh
-          filename="meshes/base_link.STL" />
+          filename="package://rf2502_new_3/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -43,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/base_link.STL" />
+          filename="package://rf2502_new_3/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -69,7 +66,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link1.STL" />
       </geometry>
       <material
         name="">
@@ -83,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -91,8 +88,8 @@
     name="body_joint1"
     type="fixed">
     <origin
-      xyz="0 0.689 0.12151"
-      rpy="0 0 0" />
+      xyz="0 -0.12151 0.689"
+      rpy="1.5708 0 0" />
     <parent
       link="base_link" />
     <child
@@ -122,7 +119,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link2.STL" />
       </geometry>
       <material
         name="">
@@ -136,7 +133,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -180,7 +177,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link3.STL" />
       </geometry>
       <material
         name="">
@@ -194,7 +191,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link3.STL" />
       </geometry>
     </collision>
   </link>
@@ -238,7 +235,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link4.STL" />
       </geometry>
       <material
         name="">
@@ -252,7 +249,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/body_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/body_Link4.STL" />
       </geometry>
     </collision>
   </link>
@@ -296,7 +293,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link.STL" />
       </geometry>
       <material
         name="">
@@ -310,7 +307,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -354,7 +351,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link1.STL" />
       </geometry>
       <material
         name="">
@@ -368,7 +365,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -412,7 +409,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link2.STL" />
       </geometry>
       <material
         name="">
@@ -426,7 +423,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -470,7 +467,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link3.STL" />
       </geometry>
       <material
         name="">
@@ -484,7 +481,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link3.STL" />
       </geometry>
     </collision>
   </link>
@@ -528,7 +525,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link4.STL" />
       </geometry>
       <material
         name="">
@@ -542,7 +539,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link4.STL" />
       </geometry>
     </collision>
   </link>
@@ -586,7 +583,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link5.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link5.STL" />
       </geometry>
       <material
         name="">
@@ -600,7 +597,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/armr_Link5.STL" />
+          filename="package://rf2502_new_3/meshes/armr_Link5.STL" />
       </geometry>
     </collision>
   </link>
@@ -644,7 +641,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handr_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/handr_Link1.STL" />
       </geometry>
       <material
         name="">
@@ -658,7 +655,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handr_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/handr_Link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -702,7 +699,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handr_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/handr_Link2.STL" />
       </geometry>
       <material
         name="">
@@ -716,7 +713,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handr_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/handr_Link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -760,7 +757,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link.STL" />
       </geometry>
       <material
         name="">
@@ -774,7 +771,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link.STL" />
       </geometry>
     </collision>
   </link>
@@ -818,7 +815,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link1.STL" />
       </geometry>
       <material
         name="">
@@ -832,7 +829,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -876,7 +873,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link2.STL" />
       </geometry>
       <material
         name="">
@@ -890,7 +887,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -934,7 +931,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link3.STL" />
       </geometry>
       <material
         name="">
@@ -948,7 +945,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link3.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link3.STL" />
       </geometry>
     </collision>
   </link>
@@ -992,7 +989,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link4.STL" />
       </geometry>
       <material
         name="">
@@ -1006,7 +1003,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link4.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link4.STL" />
       </geometry>
     </collision>
   </link>
@@ -1050,7 +1047,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link5.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link5.STL" />
       </geometry>
       <material
         name="">
@@ -1064,7 +1061,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/arml_Link5.STL" />
+          filename="package://rf2502_new_3/meshes/arml_Link5.STL" />
       </geometry>
     </collision>
   </link>
@@ -1108,7 +1105,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handl_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/handl_Link1.STL" />
       </geometry>
       <material
         name="">
@@ -1122,7 +1119,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handl_Link1.STL" />
+          filename="package://rf2502_new_3/meshes/handl_Link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -1166,7 +1163,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handl_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/handl_Link2.STL" />
       </geometry>
       <material
         name="">
@@ -1180,7 +1177,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="meshes/handl_Link2.STL" />
+          filename="package://rf2502_new_3/meshes/handl_Link2.STL" />
       </geometry>
     </collision>
   </link>
