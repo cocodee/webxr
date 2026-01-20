@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WebXR Teleop</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #333; font-family: monospace; }
+        #overlay {
+            position: absolute; top: 20px; left: 20px; color: #00ff00;
+            background: rgba(0, 0, 0, 0.7); padding: 15px; border-radius: 8px;
+            pointer-events: none; z-index: 10; font-size: 14px; border: 1px solid #444;
+        }
+        #ar-button {
+            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+            padding: 12px 24px; background: white; color: black; border: none;
+            border-radius: 24px; font-size: 16px; font-weight: bold; cursor: pointer; z-index: 10; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="overlay">
+        <div>WebXR 连接状态: <span id="status" style="color:red">断开</span></div>
+        <br>
+        Pos: <span id="info-pos">0, 0, 0</span><br>
+        Rot: <span id="info-rot">0, 0, 0, 1</span>
+    </div>
+
+    <button id="ar-button">进入 AR 模式</button>
+
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+        let camera, scene, renderer;
+        let socket;
+        let isConnected = false;
+
+        // 初始化 WebSocket 连接
+        function initSocket() {
+            // 自动连接到提供网页服务的同一个 IP 和端口的 /ws 路径
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+            
+            socket = new WebSocket(wsUrl);
+
+            socket.onopen = () => {
+                console.log("WS Connected");
+                isConnected = true;
+                document.getElementById('status').innerText = "已连接";
+                document.getElementById('status').style.color = "#00ff00";
+            };
+
+            socket.onclose = () => {
+                console.log("WS Disconnected");
+                isConnected = false;
+                document.getElementById('status').innerText = "断开";
+                document.getElementById('status').style.color = "red";
+                setTimeout(initSocket, 2000); // 断线重连
+            };
+        }
+
+        init();
+        initSocket();
+
+        async function init() {
+            const arButton = document.getElementById('ar-button');
+            if ('xr' in navigator) {
+                const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
+                if (isSupported) {
+                    arButton.style.display = 'block';
+                    arButton.addEventListener('click', onARButtonClick);
+                } else {
+                    document.getElementById('overlay').innerText += "\n不支持 AR 模式";
+                }
+            }
+
+            scene = new THREE.Scene();
+            // 添加一些光照和参考物体
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+            scene.add(light);
+            const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 1), new THREE.MeshPhongMaterial({ color: 0xff0055, wireframe: true }));
+            mesh.position.set(0, 0, -0.5);
+            scene.add(mesh);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.xr.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+        }
+
+        async function onARButtonClick() {
+            const session = await navigator.xr.requestSession('immersive-ar', {
+                optionalFeatures: ['local-floor', 'bounded-floor', 'dom-overlay'],
+                domOverlay: { root: document.body }
+            });
+            document.getElementById('ar-button').style.display = 'none';
+            renderer.xr.setReferenceSpaceType('local');
+            await renderer.xr.setSession(session);
+            renderer.setAnimationLoop(render);
+        }
+
+        function render() {
+            const xrCamera = renderer.xr.getCamera();
+            if (xrCamera) {
+                const p = xrCamera.position;
+                const q = xrCamera.quaternion;
+
+                // 1. 更新位置显示
+                document.getElementById('info-pos').innerText = `${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}`;
+                
+                // 2. 将四元数转换为欧拉角以便显示 (单位：度)
+                // 创建一个 Euler 对象并从四元数转换
+                const euler = new THREE.Euler().setFromQuaternion(q, 'YXZ');
+                const rx = (euler.x * 180 / Math.PI).toFixed(0); // Pitch
+                const ry = (euler.y * 180 / Math.PI).toFixed(0); // Yaw
+                const rz = (euler.z * 180 / Math.PI).toFixed(0); // Roll
+
+                document.getElementById('info-rot').innerText = `P:${rx}° Y:${ry}° R:${rz}°`;
+
+                // 3. 发送数据 (依然发送四元数以避免死锁)
+                if (isConnected && socket.readyState === WebSocket.OPEN) {
+                    const payload = {
+                        p: [p.x, p.y, p.z],
+                        q: [q.x, q.y, q.z, q.w],
+                        g: 1.0 
+                    };
+                    socket.send(JSON.stringify(payload));
+                }
+            }
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>

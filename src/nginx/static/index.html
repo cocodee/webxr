@@ -16,6 +16,84 @@
             padding: 12px 24px; background: white; color: black; border: none;
             border-radius: 24px; font-size: 16px; font-weight: bold; cursor: pointer; z-index: 10; display: none;
         }
+
+        /* 控制按钮样式 */
+        .control-button {
+            position: absolute;
+            width: 60px;  /* 触控直径 ≥14–16 mm (约60px) */
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #666;
+            background: #444;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 20;
+            touch-action: none;
+        }
+
+        .control-button:active {
+            transform: scale(0.95);
+        }
+
+        .control-button.active {
+            background: #00ff00;
+            border-color: #00ff00;
+            color: black;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        #move-button {
+            bottom: 20px;
+            left: 20px;
+        }
+
+        #rotate-button {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        /* 模式显示 */
+        #mode-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 20px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 15;
+            display: none;
+            pointer-events: none;
+            border: 2px solid #00ff00;
+        }
+
+        #mode-display.visible {
+            display: block;
+        }
+
+        /* 双击提示 */
+        #clutch-hint {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff00;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            z-index: 10;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -27,6 +105,14 @@
     </div>
 
     <button id="ar-button">进入 AR 模式</button>
+    <div id="clutch-hint">双击屏幕任意位置紧急脱离</div>
+
+    <!-- 控制按钮 -->
+    <button id="move-button" class="control-button">MOVE</button>
+    <button id="rotate-button" class="control-button">ROT</button>
+
+    <!-- 模式显示 -->
+    <div id="mode-display">IDLE</div>
 
     <script type="module">
         import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
@@ -35,12 +121,16 @@
         let socket;
         let isConnected = false;
 
+        // 状态管理
+        let currentMode = 'IDLE';  // IDLE, TRANSLATE, ROTATE
+        let lastTapTime = 0;
+        let tapCount = 0;
+
         // 初始化 WebSocket 连接
         function initSocket() {
-            // 自动连接到提供网页服务的同一个 IP 和端口的 /ws 路径
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}/ws`;
-            
+
             socket = new WebSocket(wsUrl);
 
             socket.onopen = () => {
@@ -55,8 +145,66 @@
                 isConnected = false;
                 document.getElementById('status').innerText = "断开";
                 document.getElementById('status').style.color = "red";
-                setTimeout(initSocket, 2000); // 断线重连
+                setTimeout(initSocket, 2000);
             };
+        }
+
+        // 更新按钮状态
+        function updateButtonStates() {
+            const moveBtn = document.getElementById('move-button');
+            const rotateBtn = document.getElementById('rotate-button');
+            const modeDisplay = document.getElementById('mode-display');
+
+            // 移除所有活动状态
+            moveBtn.classList.remove('active');
+            rotateBtn.classList.remove('active');
+            modeDisplay.classList.remove('visible');
+
+            // 根据当前模式更新状态
+            switch(currentMode) {
+                case 'IDLE':
+                    modeDisplay.innerText = 'IDLE';
+                    modeDisplay.style.color = '#888';
+                    break;
+                case 'TRANSLATE':
+                    moveBtn.classList.add('active');
+                    modeDisplay.innerText = 'MOVE';
+                    modeDisplay.style.color = '#00ff00';
+                    modeDisplay.classList.add('visible');
+                    break;
+                case 'ROTATE':
+                    rotateBtn.classList.add('active');
+                    modeDisplay.innerText = 'ROTATE';
+                    modeDisplay.style.color = '#00ff00';
+                    modeDisplay.classList.add('visible');
+                    break;
+            }
+        }
+
+        // 双击检测（Clutch）
+        function handleDoubleTap(event) {
+            const currentTime = Date.now();
+
+            if (currentTime - lastTapTime < 300) {  // 300ms 内双击
+                tapCount++;
+
+                if (tapCount >= 2) {
+                    // 触发 Clutch
+                    currentMode = 'IDLE';
+                    updateButtonStates();
+                    console.log('Clutch triggered - back to IDLE');
+                    tapCount = 0;
+                }
+            } else {
+                tapCount = 1;
+            }
+
+            lastTapTime = currentTime;
+
+            // 重置计数器
+            setTimeout(() => {
+                tapCount = 0;
+            }, 500);
         }
 
         init();
@@ -74,8 +222,29 @@
                 }
             }
 
+            // 初始化按钮点击事件
+            document.getElementById('move-button').addEventListener('click', () => {
+                if (currentMode === 'TRANSLATE') {
+                    currentMode = 'IDLE';
+                } else {
+                    currentMode = 'TRANSLATE';
+                }
+                updateButtonStates();
+            });
+
+            document.getElementById('rotate-button').addEventListener('click', () => {
+                if (currentMode === 'ROTATE') {
+                    currentMode = 'IDLE';
+                } else {
+                    currentMode = 'ROTATE';
+                }
+                updateButtonStates();
+            });
+
+            // 添加双击事件监听
+            document.addEventListener('dblclick', handleDoubleTap);
+
             scene = new THREE.Scene();
-            // 添加一些光照和参考物体
             const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
             scene.add(light);
             const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 1), new THREE.MeshPhongMaterial({ color: 0xff0055, wireframe: true }));
@@ -110,24 +279,27 @@
 
                 // 1. 更新位置显示
                 document.getElementById('info-pos').innerText = `${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}`;
-                
+
                 // 2. 将四元数转换为欧拉角以便显示 (单位：度)
-                // 创建一个 Euler 对象并从四元数转换
                 const euler = new THREE.Euler().setFromQuaternion(q, 'YXZ');
-                const rx = (euler.x * 180 / Math.PI).toFixed(0); // Pitch
-                const ry = (euler.y * 180 / Math.PI).toFixed(0); // Yaw
-                const rz = (euler.z * 180 / Math.PI).toFixed(0); // Roll
+                const rx = (euler.x * 180 / Math.PI).toFixed(0);
+                const ry = (euler.y * 180 / Math.PI).toFixed(0);
+                const rz = (euler.z * 180 / Math.PI).toFixed(0);
 
                 document.getElementById('info-rot').innerText = `P:${rx}° Y:${ry}° R:${rz}°`;
 
-                // 3. 发送数据 (依然发送四元数以避免死锁)
+                // 3. 发送数据
                 if (isConnected && socket.readyState === WebSocket.OPEN) {
-                    const payload = {
-                        p: [p.x, p.y, p.z],
-                        q: [q.x, q.y, q.z, q.w],
-                        g: 1.0 
-                    };
-                    socket.send(JSON.stringify(payload));
+                    // 只在有控制模式时发送数据
+                    if (currentMode !== 'IDLE') {
+                        const payload = {
+                            p: [p.x, p.y, p.z],
+                            q: [q.x, q.y, q.z, q.w],
+                            g: 1.0,
+                            m: currentMode  // 添加当前模式信息
+                        };
+                        socket.send(JSON.stringify(payload));
+                    }
                 }
             }
             renderer.render(scene, camera);
