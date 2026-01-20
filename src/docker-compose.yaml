@@ -35,6 +35,8 @@ services:
       - teleop-server
     networks:
       - webxr-net
+    volumes:
+      - ./nginx/static:/usr/share/nginx/html
 
 networks:
   webxr-net:

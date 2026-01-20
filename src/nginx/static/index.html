@@ -123,8 +123,6 @@
 
         // 状态管理
         let currentMode = 'IDLE';  // IDLE, TRANSLATE, ROTATE
-        let lastTapTime = 0;
-        let tapCount = 0;
 
         // 初始化 WebSocket 连接
         function initSocket() {
@@ -183,28 +181,10 @@
 
         // 双击检测（Clutch）
         function handleDoubleTap(event) {
-            const currentTime = Date.now();
-
-            if (currentTime - lastTapTime < 300) {  // 300ms 内双击
-                tapCount++;
-
-                if (tapCount >= 2) {
-                    // 触发 Clutch
-                    currentMode = 'IDLE';
-                    updateButtonStates();
-                    console.log('Clutch triggered - back to IDLE');
-                    tapCount = 0;
-                }
-            } else {
-                tapCount = 1;
-            }
-
-            lastTapTime = currentTime;
-
-            // 重置计数器
-            setTimeout(() => {
-                tapCount = 0;
-            }, 500);
+            // dblclick 事件本身就是双击，直接切换到 IDLE
+            currentMode = 'IDLE';
+            updateButtonStates();
+            console.log('Clutch triggered - back to IDLE');
         }
 
         init();
