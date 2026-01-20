@@ -268,18 +268,15 @@
 
                 document.getElementById('info-rot').innerText = `P:${rx}° Y:${ry}° R:${rz}°`;
 
-                // 3. 发送数据
+                // 3. 发送数据（始终发送以更新后台位置，避免重新启用时跳变）
                 if (isConnected && socket.readyState === WebSocket.OPEN) {
-                    // 只在有控制模式时发送数据
-                    if (currentMode !== 'IDLE') {
-                        const payload = {
-                            p: [p.x, p.y, p.z],
-                            q: [q.x, q.y, q.z, q.w],
-                            g: 1.0,
-                            m: currentMode  // 添加当前模式信息
-                        };
-                        socket.send(JSON.stringify(payload));
-                    }
+                    const payload = {
+                        p: [p.x, p.y, p.z],
+                        q: [q.x, q.y, q.z, q.w],
+                        g: 1.0,
+                        m: currentMode  // 添加当前模式信息，IDLE 时不做控制
+                    };
+                    socket.send(JSON.stringify(payload));
                 }
             }
             renderer.render(scene, camera);
