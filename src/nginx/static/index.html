@@ -53,6 +53,12 @@
             left: 20px;
         }
 
+        #both-button {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         #rotate-button {
             bottom: 20px;
             right: 20px;
@@ -78,6 +84,65 @@
 
         #mode-display.visible {
             display: block;
+        }
+
+        /* Gripper 滑动控制器 */
+        #gripper-container {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            z-index: 25;
+        }
+
+        #gripper-label {
+            color: #ffff00;
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        #gripper-slider {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            border-radius: 2px;
+            -webkit-appearance: none;
+        }
+
+        #gripper-slider:hover {
+            opacity: 1;
+        }
+
+        #gripper-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #00ff00;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 1px solid #000;
+        }
+
+        #gripper-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #00ff00;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 1px solid #000;
+        }
+
+        #gripper-value {
+            color: #00ff00;
+            font-size: 10px;
+            text-align: center;
+            margin-top: 2px;
         }
 
         /* 双击提示 */
@@ -109,10 +174,18 @@
 
     <!-- 控制按钮 -->
     <button id="move-button" class="control-button">MOVE</button>
+    <button id="both-button" class="control-button">BOTH</button>
     <button id="rotate-button" class="control-button">ROT</button>
 
     <!-- 模式显示 -->
     <div id="mode-display">IDLE</div>
+
+    <!-- Gripper 控制器 -->
+    <div id="gripper-container">
+        <div id="gripper-label">GRIPPER</div>
+        <input type="range" id="gripper-slider" min="0" max="1" step="0.01" value="0">
+        <div id="gripper-value">0.00</div>
+    </div>
 
     <script type="module">
         import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
@@ -122,7 +195,10 @@
         let isConnected = false;
 
         // 状态管理
-        let currentMode = 'IDLE';  // IDLE, TRANSLATE, ROTATE
+        let currentMode = 'IDLE';  // IDLE, TRANSLATE, ROTATE, BOTH
+
+        // Gripper 控制
+        let gripperValue = 0.0;
 
         // 初始化 WebSocket 连接
         function initSocket() {
@@ -150,11 +226,13 @@
         // 更新按钮状态
         function updateButtonStates() {
             const moveBtn = document.getElementById('move-button');
+            const bothBtn = document.getElementById('both-button');
             const rotateBtn = document.getElementById('rotate-button');
             const modeDisplay = document.getElementById('mode-display');
 
             // 移除所有活动状态
             moveBtn.classList.remove('active');
+            bothBtn.classList.remove('active');
             rotateBtn.classList.remove('active');
             modeDisplay.classList.remove('visible');
 
@@ -163,10 +241,17 @@
                 case 'IDLE':
                     modeDisplay.innerText = 'IDLE';
                     modeDisplay.style.color = '#888';
+                    modeDisplay.classList.add('visible');
                     break;
                 case 'TRANSLATE':
                     moveBtn.classList.add('active');
                     modeDisplay.innerText = 'MOVE';
+                    modeDisplay.style.color = '#00ff00';
+                    modeDisplay.classList.add('visible');
+                    break;
+                case 'BOTH':
+                    bothBtn.classList.add('active');
+                    modeDisplay.innerText = 'BOTH';
                     modeDisplay.style.color = '#00ff00';
                     modeDisplay.classList.add('visible');
                     break;
@@ -221,8 +306,26 @@
                 updateButtonStates();
             });
 
+            document.getElementById('both-button').addEventListener('click', () => {
+                if (currentMode === 'BOTH') {
+                    currentMode = 'IDLE';
+                } else {
+                    currentMode = 'BOTH';
+                }
+                updateButtonStates();
+            });
+
             // 添加双击事件监听
             document.addEventListener('dblclick', handleDoubleTap);
+
+            // Gripper 滑动条事件
+            const gripperSlider = document.getElementById('gripper-slider');
+            const gripperValueDisplay = document.getElementById('gripper-value');
+
+            gripperSlider.addEventListener('input', (e) => {
+                gripperValue = parseFloat(e.target.value);
+                gripperValueDisplay.innerText = gripperValue.toFixed(2);
+            });
 
             scene = new THREE.Scene();
             const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
@@ -273,7 +376,7 @@
                     const payload = {
                         p: [p.x, p.y, p.z],
                         q: [q.x, q.y, q.z, q.w],
-                        g: 1.0,
+                        g: gripperValue,  // 添加 gripper 值 (0-1)
                         m: currentMode  // 添加当前模式信息，IDLE 时不做控制
                     };
                     socket.send(JSON.stringify(payload));
